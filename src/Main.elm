@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Html exposing (Html)
 import Html.Events as Events
+import Keyboard
 import Random.Pcg as Random exposing (Generator)
 import Task
 
@@ -89,5 +90,7 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = \_ -> Sub.none
+        , subscriptions =
+            \_ ->
+                Keyboard.presses (\_ -> Next)
         }
