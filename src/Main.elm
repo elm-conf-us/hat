@@ -11,7 +11,7 @@ import Task
 
 type Model
     = Empty
-    | Running (Maybe String) (Generator (Maybe String))
+    | Running (Maybe String) (List String)
 
 
 init : ( Model, Cmd Msg )
@@ -42,7 +42,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NewNames names ->
-            ( Running Nothing (Random.sample names)
+            ( Running Nothing names
             , Cmd.none
             )
 
@@ -53,7 +53,7 @@ update msg model =
 
                 Running _ generator ->
                     ( model
-                    , Random.generate Selected generator
+                    , Random.generate Selected (Random.sample generator)
                     )
 
         Selected result ->
