@@ -1,9 +1,12 @@
 module Main exposing (..)
 
+import Element
+import Element.Attributes as Attributes
 import Html exposing (Html)
-import Html.Events as Events
 import Keyboard
 import Random.Pcg as Random exposing (Generator)
+import Style exposing (StyleSheet)
+import Style.Font as Font
 import Task
 
 
@@ -72,20 +75,55 @@ update msg model =
 -- VIEW
 
 
+type Styles
+    = NoStyle
+    | Container
+    | MainText
+
+
+sheet : StyleSheet Styles variation
+sheet =
+    Style.styleSheet
+        [ Style.style NoStyle []
+        , Style.style Container
+            [ Font.typeface
+                [ Font.importUrl
+                    { name = "Roboto Condensed"
+                    , url = "https://fonts.googleapis.com/css?family=Roboto+Condensed"
+                    }
+                , Font.sansSerif
+                ]
+            , Font.lineHeight 1.61803
+            ]
+        , Style.style MainText
+            [ Font.size 100 ]
+        ]
+
+
 view : Model -> Html Msg
 view model =
-    case model of
-        Empty ->
-            Html.div []
-                [ Html.text "Loading names" ]
+    Element.layout
+        sheet
+        (Element.column Container
+            [ Attributes.center
+            , Attributes.width (Attributes.percent 100)
+            , Attributes.verticalCenter
+            , Attributes.inlineStyle [ ( "height", "100vh" ) ]
+            ]
+            [ Element.paragraph MainText
+                []
+                [ case model of
+                    Empty ->
+                        Element.text "Loading names..."
 
-        Running Nothing _ ->
-            Html.div []
-                [ Html.text "Let's get started!" ]
+                    Running Nothing _ ->
+                        Element.text "Let's go!"
 
-        Running (Just name) _ ->
-            Html.div []
-                [ Html.text name ]
+                    Running (Just name) _ ->
+                        Element.text name
+                ]
+            ]
+        )
 
 
 
