@@ -74,10 +74,18 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    Html.div []
-        [ Html.text <| toString model
-        , Html.button [ Events.onClick Next ] [ Html.text "Pull a name out of the hat." ]
-        ]
+    case model of
+        Empty ->
+            Html.div []
+                [ Html.text "Loading names" ]
+
+        Running Nothing _ ->
+            Html.div []
+                [ Html.text "Let's get started!" ]
+
+        Running (Just name) _ ->
+            Html.div []
+                [ Html.text name ]
 
 
 
