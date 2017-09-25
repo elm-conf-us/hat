@@ -65,8 +65,13 @@ update msg model =
                 Empty ->
                     ( model, Cmd.none )
 
-                Running _ generator ->
-                    ( Running result generator
+                Running _ names ->
+                    ( Running
+                        result
+                        (result
+                            |> Maybe.map (\unwrapped -> List.filter ((/=) unwrapped) names)
+                            |> Maybe.withDefault names
+                        )
                     , Cmd.none
                     )
 
