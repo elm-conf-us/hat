@@ -13,14 +13,17 @@ import Style.Font as Font
 -- MODEL
 
 
-type Model
-    = Empty
-    | Running (Maybe String) (List String)
+type alias Model =
+    { picked : Maybe String
+    , remaining : List String
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Running Nothing Names.names
+    ( { picked = Nothing
+      , remaining = Names.names
+      }
     , Cmd.none
     )
 
@@ -38,29 +41,20 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Next ->
-            case model of
-                Empty ->
-                    ( model, Cmd.none )
-
-                Running _ generator ->
-                    ( model
-                    , Random.generate Selected (Random.sample generator)
-                    )
+            ( model
+            , Random.generate Selected (Random.sample model.remaining)
+            )
 
         Selected result ->
-            case model of
-                Empty ->
-                    ( model, Cmd.none )
-
-                Running _ names ->
-                    ( Running
-                        result
-                        (result
-                            |> Maybe.map (\unwrapped -> List.filter ((/=) unwrapped) names)
-                            |> Maybe.withDefault names
-                        )
-                    , Cmd.none
-                    )
+            ( { model
+                | picked = result
+                , remaining =
+                    result
+                        |> Maybe.map (\unwrapped -> List.filter ((/=) unwrapped) model.remaining)
+                        |> Maybe.withDefault model.remaining
+              }
+            , Cmd.none
+            )
 
 
 
@@ -104,14 +98,11 @@ view model =
             ]
             [ Element.paragraph MainText
                 []
-                [ case model of
-                    Empty ->
-                        Element.text "Loading names..."
-
-                    Running Nothing _ ->
+                [ case model.picked of
+                    Nothing ->
                         Element.text "Let's go!"
 
-                    Running (Just name) _ ->
+                    Just name ->
                         Element.text name
                 ]
             ]
