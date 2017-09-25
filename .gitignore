@@ -5,3 +5,4 @@ repl-temp-*
 /index.html
 /names.csv
 /names.json
+/src/Names.elm

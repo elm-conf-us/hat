@@ -4,10 +4,10 @@ import Element
 import Element.Attributes as Attributes
 import Html exposing (Html)
 import Keyboard
+import Names
 import Random.Pcg as Random exposing (Generator)
 import Style exposing (StyleSheet)
 import Style.Font as Font
-import Task
 
 
 -- MODEL
@@ -20,8 +20,8 @@ type Model
 
 init : ( Model, Cmd Msg )
 init =
-    ( Empty
-    , loadNames
+    ( Running Nothing Names.names
+    , Cmd.none
     )
 
 
@@ -30,26 +30,13 @@ init =
 
 
 type Msg
-    = NewNames (List String)
-    | Next
+    = Next
     | Selected (Maybe String)
-
-
-loadNames : Cmd Msg
-loadNames =
-    -- TODO faaaake but will get us there for data modeling purposes
-    Task.succeed [ "Alice", "Bob", "Clara", "Dave", "Elizabeth", "Frank", "Grace", "Herman", "Isabelle", "James", "Kyrie" ]
-        |> Task.perform NewNames
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NewNames names ->
-            ( Running Nothing names
-            , Cmd.none
-            )
-
         Next ->
             case model of
                 Empty ->
