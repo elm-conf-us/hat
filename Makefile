@@ -1,4 +1,14 @@
-index.html: elm-stuff src/Names.elm src/**/*.elm
+ELM_FILES=src/Main.elm src/Names.elm
+
+.PHONY: all
+all: index.html
+
+.PHONY: clean
+clean:
+	rm -rf elm-stuff
+	rm -f src/Names.elm names.json
+
+index.html: elm-stuff ${ELM_FILES}
 	elm make --output=$@ src/Main.elm
 
 elm-stuff: elm-package.json
