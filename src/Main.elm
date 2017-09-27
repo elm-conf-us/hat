@@ -96,7 +96,7 @@ sheet =
             , Font.lineHeight 1.61803
             ]
         , Style.style MainText
-            [ Font.size 100 ]
+            [ Font.size 150 ]
         ]
 
 
