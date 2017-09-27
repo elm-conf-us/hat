@@ -1,0 +1,17 @@
+        </script>
+        <script type="text/javascript">
+         document.addEventListener("DOMContentLoaded", function(event) {
+             var app = Elm.Main.fullscreen();
+
+             app.ports.toggleFullscreen.subscribe(function() {
+                 try {
+                     window.document.documentElement.webkitRequestFullscreen();
+                 } catch (e) {
+                     alert("hey, this only works in Chrome. Sorry!");
+                     console.error(e);
+                 }
+             });
+         });
+        </script>
+    </body>
+</html>

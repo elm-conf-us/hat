@@ -6,9 +6,12 @@ all: index.html
 .PHONY: clean
 clean:
 	rm -rf elm-stuff
-	rm -f src/Names.elm names.json
+	rm -f src/Names.elm names.json index.js
 
-index.html: elm-stuff ${ELM_FILES}
+index.html: index.js html/pre.html html/post.html
+	cat html/pre.html index.js html/post.html > $@
+
+index.js: elm-stuff ${ELM_FILES}
 	elm make --output=$@ src/Main.elm
 
 elm-stuff: elm-package.json
