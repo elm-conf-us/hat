@@ -1,9 +1,10 @@
-module Main exposing (..)
+port module Main exposing (..)
 
+import Char
 import Element
 import Element.Attributes as Attributes
 import Html exposing (Html)
-import Keyboard
+import Keyboard exposing (KeyCode)
 import Names
 import Random.Pcg as Random exposing (Generator)
 import Style exposing (StyleSheet)
@@ -33,17 +34,30 @@ init =
 
 
 type Msg
-    = Next
+    = KeyPress KeyCode
     | Selected (Maybe String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Next ->
-            ( model
-            , Random.generate Selected (Random.sample model.remaining)
-            )
+        KeyPress code ->
+            case Char.fromCode code of
+                -- fullscreen
+                'f' ->
+                    ( model
+                    , toggleFullscreen ()
+                    )
+
+                -- reset
+                'r' ->
+                    init
+
+                -- anything else just picks another name
+                _ ->
+                    ( model
+                    , Random.generate Selected (Random.sample model.remaining)
+                    )
 
         Selected result ->
             ( { model
@@ -113,6 +127,9 @@ view model =
 -- MAIN
 
 
+port toggleFullscreen : () -> Cmd msg
+
+
 main : Program Never Model Msg
 main =
     Html.program
@@ -121,5 +138,5 @@ main =
         , view = view
         , subscriptions =
             \_ ->
-                Keyboard.presses (\_ -> Next)
+                Keyboard.presses KeyPress
         }
